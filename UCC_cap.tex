@@ -29,6 +29,9 @@
 \newcommand{\etal}{\textit{et al.}\ }
 \newcommand{\etc}{etc.\ }
 
+% End of integrals
+\renewcommand{\d}{\;\mathrm{{d}}}
+
 
 \begin{document}
 \title{Scheduling Workflows onto Power-Constrained VMs}
@@ -114,12 +117,44 @@ This inability to adapt to changing circumstances is a limitation of static sche
 \end{algorithm}
 
 \section{Experimental Evaluation}
-The cloud workflow simulator in \cite{CloudWorkflowSimulator}, originally used in \cite{malawski2012cost}, was used to implement the proposed approach. The performance of the proposed algorithm is compared and evaluated using a FIFO approach, where... Synthetic data of real scientific applications... using the workflow generator in \cite{WorkflowGenerator}...
 
+In order to evaluate its performance on large workflows the proposed algorithm was implemented within the cloud workflow simulator \cite{CloudWorkflowSimulator,malawski2012cost}.
+Performance is tested on synthetic workflow data corresponding to real scientific applications generated using WorkflowGenerator \cite{WorkflowGenerator,Bharathi2008}.
+
+The performance of the power-capped HEFT algorithm was compared to a simple first-come-first-served (FCFS) scheduling approach, where jobs are scheduled to the first available VM in the order that the jobs are ready (\ie when all predecessors in the workflow DAG are complete).
+
+For these experiments the power cap $P(t)$ is chosen to be a simple piecewise-constant function of time.
+It begins with power $P_0$, drops to power $P_0/2$ at time $\tau/3$, then jumps back to power $P_0$ at time $2\tau/3$.
+The values of $P_0$ and $\tau$ are chosen based on the workflow as:
+\begin{equation}
+  P_0 =, \quad \tau =,
+\end{equation}
+which correspond to $P_0$ approximately ??ds, and $\tau$ approximately the makespan.
+
+The makespan (total run time), $T$, is normalised by $T' = \alpha \int_0^T P(t) \d t$ where $\alpha$ is the instructions executed per unit of power consumption for the VMs.
+$T'$ corresponds to the optimal makespan if all available power was used, ignoring the fact that VMs use discrete amounts of power and that jobs take a discrete amount of time.
+
+??ds Figures show...
+
+??ds some analysis of the results...
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\columnwidth]{{{images/schedule-length-ratio-SIPHT}}}
+  \caption{}
+  \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\columnwidth]{{{images/schedule-length-ratio-MONTAGE}}}
+  \caption{}
+  \label{fig:placeholder1}
+\end{figure}
 
 \section{Conclusion}
 
-here goes the conclusion (4-5 lines should be enough)
+??ds here goes the conclusion (4-5 lines should be enough)
 %This paper addressed the problem of resource provisioning and workflow scheduling under power constraints. It proposed an algorithm that determines the number of VMs to be provisioned for the workflow execution and schedule the tasks onto the available VMs so that the power budget is met.
 
 \bibliographystyle{IEEEtran}
