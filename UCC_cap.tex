@@ -67,17 +67,24 @@ In contrast to related work making elaborate assessments of the power/performanc
 We assume that a single class of VMs is available, and that they each have fixed power consumption (\ie no dynamic voltage or frequency scaling).
 
 
-\section{Algorithm}
+\section{The Algorithm}
 
 As mentioned in \cref{sec:intr-probl-descr}, we assume that only a single type of VM with fixed power consumption is available.
 Thus the number of VMs available is determined by the power cap: we allow the use of as many VMs as possible while remaining below the cap.
 So the problem is reduced to scheduling jobs on a time-varying number of VMs.
 
-Our algorithm is based on the well known HEFT scheduling algorithm (Heterogeneous Earliest Finish Time) \cite{Topcuoglu2002heft}.
-In standard HEFT initially all VMs are available at all times, and slots are occupied by jobs as the algorithm progresses.
-In our power-capped modification we instead begin with some slots occupied by dummy jobs at times when there is insufficient power to run that VM.
+Our algorithm is based on the well known Heterogeneous Earliest Finish Time (HEFT) scheduling algorithm \cite{Topcuoglu2002heft}.
+HEFT is a static, heuristic scheduling algorithm.
+It operates in two steps.
+First the jobs are sorted by their upward rank, a combination of factors based on the job's mean computation time (over the available VMs), mean communication time, and the upward rank of its successors in the workflow DAG.
+Second the jobs are scheduled, in the above order, to the VM that results in the earliest finish time for that job.
+Due to space constraints we refer to the paper \cite{Topcuoglu2002heft} for details of the HEFT algorithm.
+
+In standard HEFT initially all VMs are available at all times, portions of time on the VMs are occupied by jobs as the algorithm progresses.
+In our power-capped modification we instead begin with some portions of VM time occupied by dummy jobs at times when there is insufficient power to run that VM.
 Following this initial modification of the available slots the algorithm proceeds as standard HEFT.
-Full details are given in \cref{alg:power-capped-heft}.
+The key observation is that this does not interfere with the running of HEFT except to prevent jobs from being scheduled to unavailable VMs.
+The pseudocode for this algorithm is given in \cref{alg:power-capped-heft}.
 
 Note that, despite the name, our algorithm currently assumes homogeneous VMs.
 However the algorithm could be easily extended for heterogeneous VMs by the addition of some heuristic for determining which VMs provide optimal performance per watt for the given jobs.
@@ -87,11 +94,22 @@ This inability to adapt to changing circumstances is a limitation of static sche
 
 \begin{algorithm}
   \begin{algorithmic}[1]
-    \State Determine number of VMs as a function of time
-    \State Allocate dummy jobs to times when VMs are not available
-    \State Run HEFT
+    \State Determine the number of VMs available over time within the power cap
+    \State Schedule dummy jobs at times when VMs are unavailable
+    \State Run HEFT with the modified initial schedule
+
+    % \State Compute computation costs of tasks and commumcation costs of edges.
+    % \State Compute upward rank for all tasks
+    % \State Sort tasks in non-increasing order of upward rank
+    % \For{task $t$ in \texttt{ranked\_tasks}}
+    %     \For{VM $v$ in \texttt{VM\_list}}
+    %         \State Compute $\texttt{EFT}(t, v)$
+    %     \EndFor
+    %     \State Assign task $t$ to VM $v'$ that minimises $\texttt{EFT}(t, v')$
+    % \EndFor
+
   \end{algorithmic}
-  \caption{Power capped HEFT}
+  \caption{Power-capped HEFT scheduling algorithm.}
   \label{alg:power-capped-heft}
 \end{algorithm}
 
