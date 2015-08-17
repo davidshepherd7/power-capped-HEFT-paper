@@ -1,0 +1,114 @@
+\documentclass[10pt, conference, compsocconf]{IEEEtran} %\documentclass[10pt, conference, compsocconf]{IEEEtran} %\documentclass[conference]{IEEEtran}%%\documentclass{llncs}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{graphicx} 
+\usepackage{subfig}
+\usepackage{multirow}
+\usepackage{tikz}
+\usetikzlibrary{fit,positioning}
+\usetikzlibrary{arrows}
+\usetikzlibrary{calc}
+\usepackage{url}
+\usepackage{amsmath}
+\usepackage{cleveref}
+
+%\setlength{\parskip}{0pt}
+
+\let\OLDthebibliography\thebibliography
+\renewcommand\thebibliography[1]{
+  \OLDthebibliography{#1}
+  \setlength{\parskip}{0pt}
+  \setlength{\itemsep}{0pt plus 0.3ex}
+}
+
+% Commands for Latin abbrevs, trailing slash is needed so that latex knows
+% the final "." is not the end of a sentence.
+\newcommand{\ie}{\textit{i.e.}\ }
+\newcommand{\cf}{\textit{c.f.}\ }
+\newcommand{\eg}{\textit{e.g.}\ }
+\newcommand{\etal}{\textit{et al.}\ }
+\newcommand{\etc}{etc.\ }
+
+
+\begin{document}
+\title{Scheduling Workflows onto Power-Constrained VMs}
+\author{
+\IEEEauthorblockN{David Shepherd, Ilia Pietri, Rizos Sakellariou}
+\IEEEauthorblockA{School of Computer Science, University of Manchester, UK}
+}
+
+\maketitle
+
+\begin{abstract}
+With energy consumption being an issue of growing concern in large-scale cloud data centers, providers may wish to impose restrictions on the power usage of the hosts.
+This raises the challenge of operating cloud resources under power limits which may vary over time.
+Motivated by such a constraint, this paper considers the problem of scheduling scientific workflows in an environment where the number of VMs available is limited by a time-varying power cap.
+A simple scheduling algorithm for such cases is proposed and experimentally evaluated.
+\end{abstract}
+
+\section{Introduction and Problem Description} %(workflows, scheduling, power cap)
+\label{sec:intr-probl-descr}
+
+Cloud computing platforms offer a flexible environment to provide user resources on demand.
+However, the scale of existing cloud data centers may lead to high energy consumption, making electricity cost a significant element in their operation.
+To manage such costs cloud providers may set power budgets~\cite{zhang2011capping}, which in turn may lead to power caps for specific users or applications.
+This implies that the latter will have to adjust their demands accordingly and limit the number of VMs they use to the extent that they do not exceed the power cap.
+
+%Power consumption is an increasing concern to be addressed in modern computing systems with the need for power management techniques arising in order to reduce power usage of the hosts. Among these, power capping is a mechanism used to constrain the power consumed by the hosts up to a certain limit \cite{kansal2010virtual}. To achieve this, power consumption is controlled by adjusting the number of operating hosts and their power management properties, e.g. CPU frequency \cite{fan2007power,bailey2014adaptive}. Cloud computing platforms offer a flexible environment to adjust the cloud resources according to the constraints dynamically by providing VM elasticity. The number of the VMs that can be assigned to the hosts may range depending on the power budget limit and power caps can be seen as a constraint that limits the number of VMs to be used for the execution of applications. However, the number of used VMs affects application performance as independent jobs can be executed in parallel. Depending on the power budget, the number of the VMs can be adjusted to optimise application performance. For example, an extra number of VMs can be allocated for the execution of parallel jobs when the power budget increases or deallocated when the power budget decreases postponing the execution of several jobs. 
+
+This paper focuses on scheduling under a power cap in scientific workflow applications.
+Scientific workflows \cite{deelmanbook} consist of inter-related tasks with data dependencies between them.
+They can be modelled as a Directed Acyclic Graph (DAG) where the nodes represent the computational tasks and edges represent the data dependencies between them.
+We assume that information on task runtime and data transfer is known and users are interested in (dynamically) maximizing the number of VMs provisioned to take advantage of the inherent parallelism in the workflow structure.
+As the power budget limits the number of VMs that can be provisioned over time the problem that arises is how to schedule tasks onto VMs while taking into account fluctuations in the number of available VMs.
+This paper suggests a scheduling algorithm to address this problem.
+
+In contrast to related work making elaborate assessments of the power/performance correlation, such as \cite{bailey2014adaptive}, we use a simple power model and focus instead on the scheduling challenge.
+We assume that a single class of VMs is available, and that they each have fixed power consumption (\ie no dynamic voltage or frequency scaling).
+
+
+\section{Algorithm}
+
+As mentioned in \cref{sec:intr-probl-descr}, we assume that only a single type of VM with fixed power consumption is available.
+Thus the number of VMs available is determined by the power cap: we allow the use of as many VMs as possible while remaining below the cap.
+So the problem is reduced to scheduling jobs on a time-varying number of VMs.
+
+Our algorithm is based on the well known HEFT scheduling algorithm (Heterogeneous Earliest Finish Time) \cite{Topcuoglu2002heft}.
+In standard HEFT initially all VMs are available at all times, and slots are occupied by jobs as the algorithm progresses.
+In our power-capped modification we instead begin with some slots occupied by dummy jobs at times when there is insufficient power to run that VM.
+Following this initial modification of the available slots the algorithm proceeds as standard HEFT.
+Full details are given in \cref{alg:power-capped-heft}.
+
+Note that, despite the name, our algorithm currently assumes homogeneous VMs.
+However the algorithm could be easily extended for heterogeneous VMs by the addition of some heuristic for determining which VMs provide optimal performance per watt for the given jobs.
+
+Also note that the power cap is only ``theoretically'' enforced: if jobs overrun it may be violated unless the VM is killed and a new schedule is calculated.
+This inability to adapt to changing circumstances is a limitation of static scheduling algorithms.
+
+\begin{algorithm}
+  \begin{algorithmic}[1]
+    \State Determine number of VMs as a function of time
+    \State Allocate dummy jobs to times when VMs are not available
+    \State Run HEFT
+  \end{algorithmic}
+  \caption{Power capped HEFT}
+  \label{alg:power-capped-heft}
+\end{algorithm}
+
+\section{Experimental Evaluation}
+The cloud workflow simulator in \cite{CloudWorkflowSimulator}, originally used in \cite{malawski2012cost}, was used to implement the proposed approach. The performance of the proposed algorithm is compared and evaluated using a FIFO approach, where... Synthetic data of real scientific applications... using the workflow generator in \cite{WorkflowGenerator}...
+
+
+\section{Conclusion}
+
+here goes the conclusion (4-5 lines should be enough)
+%This paper addressed the problem of resource provisioning and workflow scheduling under power constraints. It proposed an algorithm that determines the number of VMs to be provisioned for the workflow execution and schedule the tasks onto the available VMs so that the power budget is met.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+
+
+\end{document}
+
+
