@@ -79,18 +79,18 @@ So the problem is reduced to scheduling jobs on a time-varying number of VMs.
 Our algorithm is based on the well known Heterogeneous Earliest Finish Time (HEFT) scheduling algorithm \cite{Topcuoglu2002heft}.
 HEFT is a static, heuristic scheduling algorithm.
 It operates in two steps.
-First the jobs are sorted by their upward rank, a combination of factors based on the job's mean computation time (over the available VMs), mean communication time, and the upward rank of its successors in the workflow DAG.
-Second the jobs are scheduled, in the above order, to the VM that results in the earliest finish time for that job.
+First the tasks are sorted by their upward rank, a combination of factors based on the job's mean computation time (over the available VMs), mean communication time, and the upward rank of its successors in the workflow DAG.
+Second the tasks are scheduled, in the above order, to the VM that results in the earliest finish time for that job.
 Due to space constraints we refer to the paper \cite{Topcuoglu2002heft} for details of the HEFT algorithm.
 
-In standard HEFT initially all VMs are available at all times, portions of time on the VMs are occupied by jobs as the algorithm progresses.
+In standard HEFT initially all VMs are available at all times, and portions of time on the VMs are occupied by jobs as the algorithm progresses.
 In our power-capped modification we instead begin with some portions of VM time occupied by dummy jobs at times when there is insufficient power to run that VM.
 Following this initial modification of the available slots the algorithm proceeds as standard HEFT.
 The key observation is that this does not interfere with the running of HEFT except to prevent jobs from being scheduled to unavailable VMs.
 The pseudocode for this algorithm is given in \cref{alg:power-capped-heft}.
 
 Note that, despite the name, our algorithm currently assumes homogeneous VMs.
-However the algorithm could be easily extended for heterogeneous VMs by the addition of some heuristic for determining which VMs provide optimal performance per watt for the given jobs.
+However the algorithm could be easily extended for heterogeneous VMs by the addition of some heuristic for determining which VMs provide optimal performance per watt for the given tasks.
 
 Also note that the power cap is only ``theoretically'' enforced: if jobs overrun it may be violated unless the VM is killed and a new schedule is calculated.
 This inability to adapt to changing circumstances is a limitation of static scheduling algorithms.
