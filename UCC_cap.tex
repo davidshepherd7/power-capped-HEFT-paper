@@ -119,20 +119,20 @@ This inability to adapt to changing circumstances is a limitation of static sche
 \section{Experimental Evaluation}
 
 In order to evaluate its performance on large workflows the proposed algorithm was implemented within the cloud workflow simulator \cite{CloudWorkflowSimulator,malawski2012cost}.
-Performance is tested on synthetic workflow data corresponding to real scientific applications generated using WorkflowGenerator \cite{WorkflowGenerator,Bharathi2008}.
+Performance is tested on synthetic workflow data corresponding to real scientific applications generated using WorkflowGenerator \cite{WorkflowGenerator,Silva2014WorkflowGenerator}.
 
-The performance of the power-capped HEFT algorithm was compared to a simple first-come-first-served (FCFS) scheduling approach, where jobs are scheduled to the first available VM in the order that the jobs are ready (\ie when all predecessors in the workflow DAG are complete).
+The performance of the power-capped HEFT algorithm was compared to a simple first-come-first-served (FCFS) scheduling approach, where tasks are scheduled to the first available VM in the order that they are ready (\ie when all predecessors in the workflow DAG are complete).
 
 For these experiments the power cap $P(t)$ is chosen to be a simple piecewise-constant function of time.
 It begins with power $P_0$, drops to power $P_0/2$ at time $\tau/3$, then jumps back to power $P_0$ at time $2\tau/3$.
-The values of $P_0$ and $\tau$ are chosen based on the workflow as:
-\begin{equation}
-  P_0 =, \quad \tau =,
-\end{equation}
-which correspond to $P_0$ approximately ??ds, and $\tau$ approximately the makespan.
+It remains to choose values for $\tau$ and $P_0$ such that they are reasonable for any workflow.
+We choose $\tau$ to be the computation time for the critical path of the workflow DAG, \ie a lower bound for the makespan.
+We then choose $P_0$ to be $P_0 = \frac{\alpha C}{\tau}$, where $\alpha$ is the instructions executed per unit of power consumption for the VMs and $C$ is the total number of instructions needed for all tasks in the workflow.
+This corresponds to the (constant) power that would be needed to finish all tasks by time $\tau$ if all of the available energy was used.
 
-The makespan (total run time), $T$, is normalised by $T' = \alpha \int_0^T P(t) \d t$ where $\alpha$ is the instructions executed per unit of power consumption for the VMs.
-$T'$ corresponds to the optimal makespan if all available power was used, ignoring the fact that VMs use discrete amounts of power and that jobs take a discrete amount of time.
+\Cref{fig:placeholder,fig:placeholder1} show normalised makespans against number of nodes in the DAG for two example applications when scheduled with power-capped HEFT and the simple FCFS approach.
+The makespan (total run time), $T$, is normalised by $T' = \alpha \int_0^T P(t) \d t$, where $\alpha$ is as above.
+$T'$ corresponds to the optimal makespan if all available energy from the time-varying power cap was used.
 
 ??ds Figures show...
 
