@@ -121,6 +121,8 @@ This inability to adapt to changing circumstances is a limitation of static sche
 In order to evaluate its performance on large workflows the proposed algorithm was implemented within the cloud workflow simulator \cite{CloudWorkflowSimulator,malawski2012cost}.
 Performance is tested on synthetic workflow data corresponding to real scientific applications generated using WorkflowGenerator \cite{WorkflowGenerator,Silva2014WorkflowGenerator}.
 
+In our implementation communication costs are not included for simplicity (and due to lack of support in cloud workflow simulator).
+
 The performance of the power-capped HEFT algorithm was compared to a simple first-come-first-served (FCFS) scheduling approach, where tasks are scheduled to the first available VM in the order that they are ready (\ie when all predecessors in the workflow DAG are complete).
 
 For these experiments the power cap $P(t)$ is chosen to be a simple piecewise-constant function of time.
@@ -130,32 +132,35 @@ We choose $\tau$ to be the computation time for the critical path of the workflo
 We then choose $P_0$ to be $P_0 = \frac{\alpha C}{\tau}$, where $\alpha$ is the instructions executed per unit of power consumption for the VMs and $C$ is the total number of instructions needed for all tasks in the workflow.
 This corresponds to the (constant) power that would be needed to finish all tasks by time $\tau$ if all of the available energy was used.
 
-\Cref{fig:placeholder,fig:placeholder1} show normalised makespans against number of nodes in the DAG for two example applications when scheduled with power-capped HEFT and the simple FCFS approach.
-The makespan (total run time), $T$, is normalised by $T' = \alpha \int_0^T P(t) \d t$, where $\alpha$ is as above.
-$T'$ corresponds to the optimal makespan if all available energy from the time-varying power cap was used.
+We plot the ratio of the HEFT-based makespan to the FCFS-based makespan in order to compare the performance of the algorithms over a wide range of workflow sizes.
+\Cref{fig:sipht} shows the ratio of the two makespans against the number of nodes in the DAG for SIPHT workflows. \Cref{fig:genome} shows the same plot for GENOME workflows.
+We see that in both cases the HEFT-based scheduling algorithm outperforms the naive approach by a margin between roughly $0.9\times$ and $0.7\times$.
+We also note that HEFT-based scheduling performs better as the size of the workflow DAG increases.
 
-??ds Figures show...
+% ??ds Not really sure why, might look into it next week if there's time
 
-??ds some analysis of the results...
+
+% Captions should be mostly the same, so use a macro
+\newcommand{\captionmacro}[1]{The ratio of the HEFT-based makespan to the FCFS-based makespan against the number of nodes in the workflow DAG for {{#1}} workflows \cite{Bharathi2008}.}
 
 \begin{figure}
   \centering
   \includegraphics[width=\columnwidth]{{{images/schedule-length-ratio-SIPHT}}}
-  \caption{}
-  \label{fig:placeholder}
+  \caption{\captionmacro{SIPHT}}
+  \label{fig:sipht}
 \end{figure}
 
 \begin{figure}
   \centering
-  \includegraphics[width=\columnwidth]{{{images/schedule-length-ratio-MONTAGE}}}
-  \caption{}
-  \label{fig:placeholder1}
+  \includegraphics[width=\columnwidth]{{{images/schedule-length-ratio-GENOME}}}
+  \caption{\captionmacro{GENOME}}
+  \label{fig:genome}
 \end{figure}
 
 \section{Conclusion}
 
-??ds here goes the conclusion (4-5 lines should be enough)
-%This paper addressed the problem of resource provisioning and workflow scheduling under power constraints. It proposed an algorithm that determines the number of VMs to be provisioned for the workflow execution and schedule the tasks onto the available VMs so that the power budget is met.
+We have introduced an algorithm for resource provisioning and workflow scheduling under time-varying power constraints based.
+Our algorithm offers around a $0.8\times$ improvement in the makespan over the naive approach of using dynamic scheduling without knowledge of the changing power cap.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
