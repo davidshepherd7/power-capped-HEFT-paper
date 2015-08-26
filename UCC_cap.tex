@@ -67,14 +67,11 @@ As the power budget limits the number of VMs that can be provisioned over time t
 This paper suggests a scheduling algorithm to address this problem.
 
 In contrast to related work making elaborate assessments of the power/performance correlation, such as \cite{bailey2014adaptive}, we use a simple power model and focus instead on the scheduling challenge.
-We assume that a single class of VMs is available, and that they each have fixed power consumption (\ie no dynamic voltage or frequency scaling).
-
-
-\section{The Algorithm}
-
-As mentioned in \cref{sec:intr-probl-descr}, we assume that only a single type of VM with fixed power consumption is available.
+We assume that a single type of VM is available, and that the VMs has a fixed power consumption (\ie no dynamic voltage or frequency scaling).
 Thus the number of VMs available is determined by the power cap: we allow the use of as many VMs as possible while remaining below the cap.
 So the problem is reduced to scheduling jobs on a time-varying number of VMs.
+
+\section{The Algorithm}
 
 Our algorithm is based on the well known Heterogeneous Earliest Finish Time (HEFT) scheduling algorithm \cite{Topcuoglu2002heft}.
 HEFT is a static, heuristic scheduling algorithm.
@@ -90,7 +87,9 @@ The key observation is that this does not interfere with the running of HEFT exc
 The pseudocode for this algorithm is given in \cref{alg:power-capped-heft}.
 
 Note that, despite the name, our algorithm currently assumes homogeneous VMs.
-However the algorithm could be easily extended for heterogeneous VMs by the addition of some heuristic for determining which VMs provide optimal performance per watt for the given tasks.
+However the algorithm could be easily extended for heterogeneous VMs as follows: no VMs are spawned initially, but HEFT is allowed to schedule jobs to free slots on existing VMs (as normal) \emph{or} to spawn any type of new VM for which there is sufficient power.
+So the selection of the VM types to spawn uses the same heuristic as the scheduling.
+
 
 % Also note that the power cap is only ``theoretically'' enforced: if jobs overrun it may be violated unless the VM is killed and a new schedule is calculated.
 % This inability to adapt to changing circumstances is a limitation of static scheduling algorithms.
@@ -121,6 +120,7 @@ However the algorithm could be easily extended for heterogeneous VMs by the addi
 In order to evaluate its performance on large workflows the proposed algorithm was implemented within the cloud workflow simulator \cite{CloudWorkflowSimulator,malawski2012cost}.
 Performance is tested on synthetic workflow data corresponding to real scientific applications generated using WorkflowGenerator \cite{WorkflowGenerator,Silva2014WorkflowGenerator}.
 In our implementation communication costs are not included for simplicity (and due to lack of support in cloud workflow simulator).
+However we experiment with CPU-intensive workflows \cite{Bharathi2008} so that the impact of this simplification is minimal.
 
 The performance of the power-capped HEFT algorithm was compared to a simple dynamic scheduling algorithm with no prior knowledge of the power cap.
 Tasks are scheduled using a first-come-first-served (FCFS) approach: tasks are scheduled to the first available VM in the order that they are ready (\ie when all predecessors in the workflow DAG are complete).
@@ -142,19 +142,19 @@ We also note that HEFT-based scheduling performs better as the size of the workf
 
 
 % Captions should be mostly the same, so use a macro
-\newcommand{\captionmacro}[1]{The ratio of the HEFT-based makespan to the FCFS-based makespan against the number of nodes in the workflow DAG for {{#1}} workflows \cite{Bharathi2008}.}
+\newcommand{\captionmacro}[2]{The ratio of the HEFT-based makespan to the FCFS-based makespan against the number of nodes in the workflow DAG for {{#1}} workflows {{#2}}.}
 
 \begin{figure}
   \centering
   \includegraphics[width=\columnwidth]{{{images/schedule-length-ratio-SIPHT}}}
-  \caption{\captionmacro{SIPHT}}
+  \caption{\captionmacro{SIPHT}{\cite{Livny2008}}}
   \label{fig:sipht}
 \end{figure}
 
 \begin{figure}
   \centering
   \includegraphics[width=\columnwidth]{{{images/schedule-length-ratio-GENOME}}}
-  \caption{\captionmacro{GENOME}}
+  \caption{\captionmacro{GENOME}{\cite{epigenetics}}}
   \label{fig:genome}
 \end{figure}
 
