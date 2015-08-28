@@ -88,7 +88,7 @@ The pseudocode for this algorithm is given in \Cref{alg:power-capped-heft}.
 
 Note that, despite the name, our algorithm currently assumes homogeneous VMs.
 However it could be easily extended for heterogeneous VMs as follows: no VMs are spawned initially, but HEFT is allowed to schedule jobs to free slots on existing VMs (as normal) \emph{or} to spawn any type of new VM for which there is sufficient power.
-This could be thought of as reusing the HEFT scheduling heuristic to decide which VM types to spawn.
+This could be thought of as reusing the HEFT scheduling heuristics to decide which VM types to spawn.
 
 % Also note that the power cap is only ``theoretically'' enforced: if jobs overrun it may be violated unless the VM is killed and a new schedule is calculated.
 % This inability to adapt to changing circumstances is a limitation of static scheduling algorithms.
@@ -124,7 +124,7 @@ However we experiment with CPU-intensive workflows \cite{Bharathi2008} so that t
 The performance of the power-capped HEFT algorithm was compared to a simple dynamic scheduling algorithm with no prior knowledge of the power cap.
 Tasks are scheduled using a first-come-first-served (FCFS) approach: tasks are scheduled to the first available VM in the order that they are ready (\ie when all predecessors in the workflow DAG are complete).
 The power cap is enforced by limiting the number of VMs; when the power cap is reduced VMs are killed as needed.
-Note that standard HEFT could not be used as a baseline for comparison because it requires a predefined and fixed list of VMs.
+Note that standard HEFT could not be used as a baseline for comparison as it assumes a predefined and fixed list of VMs.
 
 % Maybe we could add here why we do not use HEFT as the baseline algorithm,  such as:
 % Note that using standard HEFT as a baseline algorithm would not be feasible as HEFT requires a predefined list of available VMs  as input. To overcome this limitation, an unlimited number of VMs could be assumed, however it would not ensure that the power budget is met in the case of low power caps.
