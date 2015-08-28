@@ -67,8 +67,9 @@ As the power budget limits the number of VMs that can be provisioned over time t
 This paper suggests a scheduling algorithm to address this problem.
 
 In contrast to related work making elaborate assessments of the power/performance correlation, such as \cite{bailey2014adaptive}, we use a simple power model and focus instead on the scheduling challenge.
-We assume that a single type of VM is available, and that the VMs has a fixed power consumption (\ie no dynamic voltage or frequency scaling).
-Thus the number of VMs available is determined by the power cap: we allow the use of as many VMs as possible while remaining below the cap.
+We assume that a single VM type is available, and that the VMs have a fixed power consumption (\ie no dynamic voltage or frequency scaling).
+We also assume that information about the power cap is available ahead of time for use in scheduling decisions.
+Thus the number of VMs available at any given time is determined by the power cap: we allow the use of as many VMs as possible while remaining below the cap.
 So the problem is reduced to scheduling jobs on a time-varying number of VMs.
 
 \section{The Algorithm}
@@ -84,7 +85,7 @@ In standard HEFT initially all VMs are available at all times, and portions of t
 In our power-capped modification we instead begin with some portions of VM time occupied by dummy jobs at times when there is insufficient power to run that VM.
 Following this initial modification of the available slots the algorithm proceeds as standard HEFT.
 The key observation is that this does not interfere with the running of HEFT except to prevent jobs from being scheduled to unavailable VMs.
-The pseudocode for this algorithm is given in \cref{alg:power-capped-heft}.
+The pseudocode for this algorithm is given in \Cref{alg:power-capped-heft}.
 
 Note that, despite the name, our algorithm currently assumes homogeneous VMs.
 However the algorithm could be easily extended for heterogeneous VMs as follows: no VMs are spawned initially, but HEFT is allowed to schedule jobs to free slots on existing VMs (as normal) \emph{or} to spawn any type of new VM for which there is sufficient power.
@@ -96,9 +97,9 @@ So the selection of the VM types to spawn uses the same heuristic as the schedul
 
 \begin{algorithm}
   \begin{algorithmic}[1]
-    \State Determine the number of VMs available over time within the power cap
-    \State Schedule dummy jobs at times when VMs are unavailable
-    \State Run HEFT with the modified initial schedule
+    \State Determine the number of VMs available over time within the power cap.
+    \State Schedule dummy jobs at times when VMs are unavailable.
+    \State Run HEFT with the modified initial schedule.
 
     % \State Compute computation costs of tasks and commumcation costs of edges.
     % \State Compute upward rank for all tasks
@@ -124,14 +125,19 @@ However we experiment with CPU-intensive workflows \cite{Bharathi2008} so that t
 
 The performance of the power-capped HEFT algorithm was compared to a simple dynamic scheduling algorithm with no prior knowledge of the power cap.
 Tasks are scheduled using a first-come-first-served (FCFS) approach: tasks are scheduled to the first available VM in the order that they are ready (\ie when all predecessors in the workflow DAG are complete).
-The power cap is enforced by limiting the number of VMs, when the power cap is reduced VMs are killed as needed.
+The power cap is enforced by limiting the number of VMs; when the power cap is reduced VMs are killed as needed.
+Note that we cannot use standard HEFT as a baseline because it requires a predefined and fixed list of VMs.
+
+% Maybe we could add here why we do not use HEFT as the baseline algorithm,  such as:
+% Note that using standard HEFT as a baseline algorithm would not be feasible as HEFT requires a predefined list of available VMs  as input. To overcome this limitation, an unlimited number of VMs could be assumed, however it would not ensure that the power budget is met in the case of low power caps.
 
 In the experiments the power cap $P(t)$ is chosen to be a simple piecewise-constant function of time.
 It begins with power $P_0$, drops to power $P_0/2$ at time $\tau/3$, then jumps back to power $P_0$ at time $2\tau/3$.
 It remains to choose reasonable values for $\tau$ and $P_0$ for a general workflow.
 We choose $\tau$ to be the computation time for the critical path of the workflow DAG, \ie a lower bound for the makespan.
 We then choose $P_0$ to be $P_0 = \frac{\alpha C}{\tau}$, where $\alpha$ is the instructions executed per unit of power consumption for the VMs and $C$ is the total number of instructions needed for all tasks in the workflow.
-This corresponds to the (constant) power that would be needed to finish all tasks by time $\tau$ if all of the supplied energy was able to be used.
+This corresponds to the (constant) power that would be needed to finish all tasks by time $\tau$ if the constraints imposed by the workflow DAG and the granularity of the VMs could be ignored.
+For the experiments $\alpha=20,000$ was chosen.
 
 We plot the ratio of the HEFT-based makespan to the FCFS-based makespan in order to compare the performance of the algorithms over a wide range of workflow sizes.
 \Cref{fig:sipht} shows the ratio of the two makespans against the number of nodes in the DAG for SIPHT workflows. \Cref{fig:genome} shows the same plot for GENOME workflows.
