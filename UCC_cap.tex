@@ -34,7 +34,7 @@
 
 
 \begin{document}
-\title{Workflow Scheduling with a Power Constraint}
+\title{Power Constrained Workflow Scheduling on VMs}
 \author{
 \IEEEauthorblockN{David Shepherd, Ilia Pietri, Rizos Sakellariou}
 \IEEEauthorblockA{School of Computer Science, University of Manchester, UK}
@@ -59,7 +59,7 @@ This implies that the latter will need to limit the number of VMs they use to th
 
 %Power consumption is an increasing concern to be addressed in modern computing systems with the need for power management techniques arising in order to reduce power usage of the hosts. Among these, power capping is a mechanism used to constrain the power consumed by the hosts up to a certain limit \cite{kansal2010virtual}. To achieve this, power consumption is controlled by adjusting the number of operating hosts and their power management properties, e.g. CPU frequency \cite{fan2007power,bailey2014adaptive}. Cloud computing platforms offer a flexible environment to adjust the cloud resources according to the constraints dynamically by providing VM elasticity. The number of the VMs that can be assigned to the hosts may range depending on the power budget limit and power caps can be seen as a constraint that limits the number of VMs to be used for the execution of applications. However, the number of used VMs affects application performance as independent jobs can be executed in parallel. Depending on the power budget, the number of the VMs can be adjusted to optimise application performance. For example, an extra number of VMs can be allocated for the execution of parallel jobs when the power budget increases or deallocated when the power budget decreases postponing the execution of several jobs. 
 
-This paper focuses on scheduling under a power cap in scientific workflow applications.
+This paper focuses on scheduling in scientific workflow applications under a power cap.
 Scientific workflows \cite{deelmanbook} consist of inter-related tasks with data dependencies between them.
 They can be modelled as a Directed Acyclic Graph (DAG) where the nodes represent the computational tasks and the edges represent the data dependencies between them.
 We assume that information on task runtime and data transfer is known and users are interested in maximizing the number of VMs provisioned to take advantage of the inherent parallelism in the workflow structure.
@@ -140,7 +140,7 @@ For the experiments $\alpha=20,000$ was chosen arbitrarily.
 We plot the ratio of the HEFT-based makespan to the FCFS-based makespan in order to compare the performance of the algorithms over a wide range of workflow sizes.
 \Cref{fig:sipht} shows the ratio of the two makespans against the number of nodes in the DAG for SIPHT workflows \cite{Livny2008}.
 \Cref{fig:genome} shows the same plot for GENOME workflows \cite{epigenetics}.
-We see that in both cases the HEFT-based scheduling algorithm outperforms the naive approach by a margin between roughly $0.9\times$ and $0.7\times$.
+We see that in both cases the HEFT-based scheduling algorithm outperforms the naive approach (FCFS) by a margin between roughly $0.9\times$ and $0.7\times$.
 We also note that HEFT-based scheduling performs better as the size of the workflow DAG increases.
 
 % ??ds Not really sure why, might look into it next week if there's time
@@ -165,7 +165,7 @@ We also note that HEFT-based scheduling performs better as the size of the workf
 
 \section{Conclusion}
 
-We have introduced an algorithm for resource provisioning and workflow scheduling under time-varying power constraints based.
+We have introduced an algorithm for resource provisioning and workflow scheduling under time-varying power constraints.
 Our algorithm offers a reasonable improvement in the makespan over a naive dynamic scheduling approach.
 
 \bibliographystyle{IEEEtran}
